@@ -2,6 +2,7 @@ import React from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
 import { CheckBox } from "react-native-elements";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import moment from "moment";
 
 const { width } = Dimensions.get("window");
 
@@ -34,7 +35,11 @@ export default function Card({
           </View>
           <View>
             <Text style={styles.subtext}>Time Left</Text>
-            <Text style={styles.text}>23 hours 22 min</Text>
+            <Text style={styles.text}>
+              {moment(endDate)
+                .endOf("day")
+                .fromNow()}
+            </Text>
           </View>
         </View>
       </TouchableWithoutFeedback>
