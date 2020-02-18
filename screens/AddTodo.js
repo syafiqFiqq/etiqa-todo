@@ -10,13 +10,31 @@ import {
   View
 } from "react-native";
 import MyDatePicker from "../components/MyDatePicker";
+import { useMutation } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
 
 const { width } = Dimensions.get("window");
+
+const ADD_TODO = gql`
+  mutation AddTodo($title: String!, $startDate: date!, $endDate: date!) {
+    insert_todo(
+      objects: { title: $title, startDate: $startDate, endDate: $endDate }
+    ) {
+      returning {
+        id
+        title
+        startDate
+        endDate
+      }
+    }
+  }
+`;
 
 export default function AddTodo({ navigation }) {
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
   const [title, onChangeText] = React.useState("");
+  const [addTodo] = useMutation(ADD_TODO);
 
   const onStartDateChange = (event, selectedDate) => {
     const currentDate = selectedDate;
@@ -60,7 +78,13 @@ export default function AddTodo({ navigation }) {
         style={styles.createNowButton}
         underlayColor="rgba(0, 0, 0, 0.9)"
         onPress={() => {
-          Alert.alert("Method to be implement");
+          addTodo({
+            variables: {
+              title,
+              startDate: new Date(startDate),
+              endDate: new Date(endDate)
+            }
+          });
           onChangeText("");
           navigation.navigate("Home");
         }}

@@ -8,27 +8,69 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Card from "../components/Card";
+import { useQuery, useSubscription, useMutation } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
+
+// Subscibe(subscription) to todos collection
+const SUBSCRIBE_TO_TODOS = gql`
+  subscription {
+    todo(order_by: { id: desc }) {
+      id
+      title
+      startDate
+      endDate
+      completed
+    }
+  }
+`;
+
+// Update(mutation) todo completed(true/false) field
+const UPDATE_TODO_STATUS = gql`
+  mutation update_todo($id: Int!, $completed: Boolean!) {
+    update_todo(_set: { completed: $completed }, where: { id: { _eq: $id } }) {
+      returning {
+        completed
+      }
+    }
+  }
+`;
 
 // Function Home
 export default function Home({ navigation }) {
+  const [updateTodo] = useMutation(UPDATE_TODO_STATUS);
+  const { loading, error, data } = useSubscription(SUBSCRIBE_TO_TODOS);
+
+  if (loading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error :(</Text>;
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Card
-          title="Test"
-          startDate="2020-01-01"
-          endDate="2020-01-01"
-          completed={false}
-          updateCompleted={() => Alert.alert("Method to be implement")}
-          clicked={() =>
-            navigation.navigate("EditTodo", {
-              id: 1,
-              title: "Test",
-              sDate: "2020-01-01",
-              eDate: "2020-01-01"
-            })
-          }
-        />
+        {data.todo.map(({ id, title, startDate, endDate, completed }) => (
+          <Card
+            key={id}
+            title={title}
+            startDate={startDate}
+            endDate={endDate}
+            completed={completed}
+            updateCompleted={() =>
+              updateTodo({
+                variables: {
+                  id,
+                  completed: !completed
+                }
+              })
+            }
+            clicked={() =>
+              navigation.navigate("EditTodo", {
+                id,
+                title,
+                sDate: startDate,
+                eDate: endDate
+              })
+            }
+          />
+        ))}
       </ScrollView>
       <TouchableHighlight
         style={styles.addButton}
