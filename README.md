@@ -22,3 +22,6 @@
 
 ### Architecture
 (https://www.dropbox.com/s/of46xhy87zfnkd4/Screenshot%202020-02-19%2012.32.16.png?dl=0)
+
+### Screenshot
+(https://www.dropbox.com/sh/7j33y3tdb6z5t8x/AAD70U9h831tBgFQlk8R-FZaa?dl=0)
