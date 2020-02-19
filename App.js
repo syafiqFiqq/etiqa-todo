@@ -5,6 +5,9 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloProvider } from "@apollo/react-hooks";
 import { WebSocketLink } from "apollo-link-ws";
 import MyStack from "./navigation/routes";
+import { enableScreens } from "react-native-screens";
+
+enableScreens();
 
 // create a websocket link:
 const link = new WebSocketLink({
